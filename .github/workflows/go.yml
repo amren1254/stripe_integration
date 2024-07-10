@@ -26,9 +26,12 @@ jobs:
     - name: Build
       run: go build -v ./...
     - name: Test
-      run: go test -v ./... -json > TestResults-${{github.ref }}.json
+      run: |
+        branch_name=$(echo "${{ github.ref }}" | awk -F'/' '{print $3}')
+        go test -v ./... -json > TestResults-${branch_name}.json
     - name: Upload Go test results
       uses: actions/upload-artifact@v4
       with:
         name: Go-test-results
-        path: TestResults-${{ github.ref }}.json
+        path: TestResults-${{ steps.extract_branch_name.outputs.branch }}.json
+      if: success()
