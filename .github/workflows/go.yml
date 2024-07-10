@@ -28,10 +28,16 @@ jobs:
     - name: Test
       run: |
         branch_name=$(echo "${{ github.ref }}" | awk -F'/' '{print $3}')
-        go test -v ./... -json > TestResults-${branch_name}.json
+        go test -coverprofile=coverage.out -v ./... -json > TestResults.json
     - name: Upload Go test results
       uses: actions/upload-artifact@v4
       with:
         name: Go-test-results
-        path: TestResults-${{ steps.extract_branch_name.outputs.branch }}.json
+        path: TestResults.json
+      if: success()
+    - name: Upload coverage report
+      uses: actions/upload-artifacts@v4
+      with:
+        name: Go coverage report
+        path: coverage.out
       if: success()
