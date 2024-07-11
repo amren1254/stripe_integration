@@ -21,3 +21,11 @@ resource "azurerm_linux_web_app" "stripe_integration_app_service" {
     minimum_tls_version = "1.2" 
   }
 }
+
+resource "azurerm_app_service_source_control" "sourcecontrol" {
+  app_id             = azurerm_linux_web_app.stripe_integration_app_service.id
+  repo_url           = "https://github.com/amren1254/stripe_integration"
+  branch             = "master"
+  use_manual_integration = true
+  use_mercurial      = false
+}
