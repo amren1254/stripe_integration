@@ -29,13 +29,13 @@ jobs:
       run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o stripe-app .
     - name: Test
       run: |
-        go test -coverprofile=coverage.out -v ./... -json > TestResults.json
-    - name: Upload Go test results
+        go test -coverprofile=coverage.out -v ./... 
+    - name: Upload app binary
       if: success()
       uses: actions/upload-artifact@v4
       with:
-        name: Go-test-results
-        path: TestResults.json
+        name: app binary
+        path: stripe-app
     - name: Upload coverage report
       if: success()
       uses: actions/upload-artifact@v4
