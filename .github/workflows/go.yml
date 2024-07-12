@@ -10,6 +10,9 @@ on:
       - '**.md'
     branches: [ "master" ]
 
+env:
+  TF_DEV_WORKING_DIRECTORY: 'terraform/environments/dev/'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,10 +27,9 @@ jobs:
     - name: Install dependencies
       run: go mod download    
     - name: Build
-      run: go build -v ./...
+      run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ../../build/stripe-app ./...
     - name: Test
       run: |
-        branch_name=$(echo "${{ github.ref }}" | awk -F'/' '{print $3}')
         go test -coverprofile=coverage.out -v ./... -json > TestResults.json
     - name: Upload Go test results
       if: success()
@@ -41,9 +43,31 @@ jobs:
       with:
         name: Go coverage report
         path: coverage.out
+
   deploy-to-dev:
-    if: github.event_name == 'create' && github.event.ref_type == 'tag' && contains(github.ref, 'refs/tags/master')
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Dev
-        run: echo "Deploying to Dev environment...with terraform"
+      - name: Checkout code
+        run: actions/checkout@v2
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.1.0
+      - name: Set up Azure CLI
+        uses: azure/setup-azure-cli@v1
+  
+      - name: Login to Azure
+        run: az login --service-principal --username ${{ secrets.AZURE_CLIENT_ID }} --password ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+  
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ${{ github.workspace }}/${{ env.TF_DEV_WORKING_DIRECTORY }}
+  
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ${{ github.workspace }}/${{ env.TF_DEV_WORKING_DIRECTORY }}
+  
+      - name: Terraform Output
+        run: terraform output
+        working-directory: ${{ github.workspace }}/${{ env.TF_DEV_WORKING_DIRECTORY }}
