@@ -26,7 +26,7 @@ jobs:
     - name: Print Working Directory
       run: pwd
     - name: Build
-      run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o stripe-app ./...
+      run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./stripe-app ./...
     - name: Test
       run: |
         go test -coverprofile=coverage.out -v ./... -json > TestResults.json
