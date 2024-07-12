@@ -22,9 +22,11 @@ jobs:
     - name: Go version check 
       run: go version
     - name: Install dependencies
-      run: go mod download    
+      run: go mod download
+    - name: Print Working Directory
+      run: pwd
     - name: Build
-      run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ../../build/stripe-app ./...
+      run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./build/stripe-app ./...
     - name: Test
       run: |
         go test -coverprofile=coverage.out -v ./... -json > TestResults.json
