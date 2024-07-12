@@ -10,9 +10,6 @@ on:
       - '**.md'
     branches: [ "master" ]
 
-env:
-  TF_DEV_WORKING_DIRECTORY: 'terraform/environments/dev/'
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -62,12 +59,12 @@ jobs:
   
       - name: Terraform Init
         run: terraform init
-        working-directory: ${{ github.workspace }}/${{ env.TF_DEV_WORKING_DIRECTORY }}
+        working-directory: ${{ github.workspace }}/terraform/environments/dev/
   
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: ${{ github.workspace }}/${{ env.TF_DEV_WORKING_DIRECTORY }}
+        working-directory: ${{ github.workspace }}/terraform/environments/dev/
   
       - name: Terraform Output
         run: terraform output
-        working-directory: ${{ github.workspace }}/${{ env.TF_DEV_WORKING_DIRECTORY }}
+        working-directory: ${{ github.workspace }}/terraform/environments/dev/
