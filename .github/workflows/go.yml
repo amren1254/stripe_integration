@@ -78,7 +78,3 @@ jobs:
       # - name: Terraform Apply
       #   run: terraform apply -auto-approve
       #   # working-directory: ${{ github.workspace }}/terraform/environments/dev/
-  
-      - name: Terraform Output
-        run: terraform output
-        working-directory: ${{ github.workspace }}/terraform/environments/dev/
