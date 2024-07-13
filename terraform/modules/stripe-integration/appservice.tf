@@ -21,10 +21,8 @@ resource "azurerm_linux_web_app" "stripe_integration_app_service" {
   site_config {
     minimum_tls_version = "1.2"
   }
-  lifecycle {
-    ignore_changes = [service_plan_id]
-  }
   app_settings = {
-    WEBSITE_RUN_FROM_PACKAGE = 1
+    WEBSITE_RUN_FROM_PACKAGE       = "1"
+    SCM_DO_BUILD_DURING_DEPLOYMENT = "true"
   }
 }
