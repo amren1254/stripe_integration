@@ -27,6 +27,12 @@ jobs:
       run: pwd
     - name: Build
       run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o stripe-app .
+    
+    - uses: vimtor/action-zip@v1.2
+      with:
+        files: stripe-app
+        dest: stripe-app.zip
+    
     - name: Test
       run: |
         go test -coverprofile=coverage.out -v ./... 
@@ -52,18 +58,22 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.1.0
-          
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Terraform Init
         run: terraform init
-        working-directory: ${{ github.workspace }}/terraform/environments/dev/
+        # working-directory: ${{ github.workspace }}/terraform/environments/dev/
   
       - name: Terraform Plan
         run: terraform plan -out tfplan
-        working-directory: ${{ github.workspace }}/terraform/environments/dev/
+        # working-directory: ${{ github.workspace }}/terraform/environments/dev/
   
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: ${{ github.workspace }}/terraform/environments/dev/
+        # working-directory: ${{ github.workspace }}/terraform/environments/dev/
   
       - name: Terraform Output
         run: terraform output
