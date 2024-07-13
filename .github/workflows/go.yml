@@ -65,15 +65,15 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        # working-directory: ${{ github.workspace }}/terraform/environments/dev/
+        working-directory: ${{ github.workspace }}/terraform/environments/dev/
   
       - name: Terraform Plan
         run: terraform plan -out tfplan
-        # working-directory: ${{ github.workspace }}/terraform/environments/dev/
+        working-directory: ${{ github.workspace }}/terraform/environments/dev/
   
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-        # working-directory: ${{ github.workspace }}/terraform/environments/dev/
+      # - name: Terraform Apply
+      #   run: terraform apply -auto-approve
+      #   # working-directory: ${{ github.workspace }}/terraform/environments/dev/
   
       - name: Terraform Output
         run: terraform output
