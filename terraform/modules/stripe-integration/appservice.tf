@@ -17,11 +17,14 @@ resource "azurerm_linux_web_app" "stripe_integration_app_service" {
   resource_group_name = azurerm_resource_group.app_service_resource_group.name
   service_plan_id     = azurerm_service_plan.app_service_plan.id
   https_only          = true
+
   site_config {
     minimum_tls_version = "1.2"
   }
-  app_settings = {
-    SCM_DO_BUILD_DURING_DEPLOYMENT = true
+  lifecycle {
+    ignore_changes = [service_plan_id]
   }
-  zip_deploy_file = var.artifact_path
+  app_settings = {
+    WEBSITE_RUN_FROM_PACKAGE = 1
+  }
 }

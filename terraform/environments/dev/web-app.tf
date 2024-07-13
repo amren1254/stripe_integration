@@ -10,6 +10,6 @@ module "webservice_stripe_integration" {
 
 data "archive_file" "stripe_integration_app_service" {
   type        = "zip"
-  source_file = "${path.module}/../../../build/stripe-app"
-  output_path = "${path.module}/../../../build/stripe-app.zip"
+  source_file = "${path.module}/../../../stripe-app"
+  output_path = "${path.module}/../../../stripe-app.zip"
 }
