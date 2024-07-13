@@ -67,26 +67,6 @@ jobs:
         with:
           terraform_version: 1.1.0
 
-      # - name: Log in to Azure
-      #   uses: azure/login@v1
-      #   with:
-      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
-      # - name: Configure Terraform to use Azure Service Principal
-      #   run: |
-      #     echo "provider \"azurerm\" {
-      #       features {}
-      #       subscription_id = \"$ARM_SUBSCRIPTION_ID\"
-      #       client_id       = \"$ARM_CLIENT_ID\"
-      #       client_secret   = \"$ARM_CLIENT_SECRET\"
-      #       tenant_id       = \"$ARM_TENANT_ID\"
-      #     }" > provider.tf
-      #   env:
-      #     ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      #     ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      #     ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      #     ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-
       - name: Terraform Init
         run: terraform init
         working-directory: ${{ github.workspace }}/terraform/environments/dev/
