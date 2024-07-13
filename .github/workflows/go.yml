@@ -58,7 +58,11 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.1.0
-      
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: Configure Terraform to use Azure Service Principal
         run: |
           echo "provider \"azurerm\" {
@@ -73,7 +77,7 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-          
+
       - name: Terraform Init
         run: terraform init
         working-directory: ${{ github.workspace }}/terraform/environments/dev/
