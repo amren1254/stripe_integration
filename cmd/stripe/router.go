@@ -18,8 +18,8 @@ func (app *application) route() *gin.Engine {
 	{
 		v1.GET(constant.PING, app.Ping)
 		v1.POST(constant.CREATE_CHECKOUT_SESSION, app.CreateCheckoutSession)
-		v1.POST(constant.CREATE_PORTAL_SESSION, app.CreatePortalSession)
-		v1.POST(constant.WEBHOOK, app.WebHook)
+		v1.GET(constant.GET_PAYMENT_STATUS, app.GetPaymentStatusHandler)
+		//check if user already a subscriber
 	}
 	return routes
 }

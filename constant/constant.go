@@ -9,8 +9,7 @@ const (
 	FORWARD_SLASH           = "/"
 	VERSION_ONE             = "/v1"
 	CREATE_CHECKOUT_SESSION = "/create-checkout-session"
-	CREATE_PORTAL_SESSION   = "/create-portal-session"
-	WEBHOOK                 = "/webhook"
+	GET_PAYMENT_STATUS      = "/get-payment-status"
 )
 
 var (

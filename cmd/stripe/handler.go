@@ -30,12 +30,6 @@ func (app *application) Ping(ctx *gin.Context) {
 func (app *application) CreateCheckoutSession(ctx *gin.Context) {
 	priceID := os.Getenv("PRODUCT_PRICE_ID") // get from config/env
 	customerEmail := ctx.PostForm("customer_email")
-	//create customer first
-	// customerParams := &stripe.CustomerParams{
-	// 	Name:  stripe.String("customerName"),
-	// 	Email: &customerEmail,
-	// }
-	// newCustomer, err := customer.New(customerParams)
 	stripe.Key = app.config.stripe.key
 	params := &stripe.CheckoutSessionParams{
 		CustomerEmail: stripe.String(customerEmail),
@@ -69,140 +63,16 @@ func (app *application) CreateCheckoutSession(ctx *gin.Context) {
 }
 
 func (app *application) GetPaymentStatusHandler(ctx *gin.Context) {
-
+	//get customer details from form value
+	stripe.Key = app.config.stripe.key
+	sessionId := ""
+	params := stripe.CheckoutSessionParams{}
+	result, err := session.Get(
+		sessionId,
+		&params,
+	)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, result)
+	}
+	ctx.JSON(http.StatusOK, result.PaymentStatus)
 }
-
-// func (sh *application) CreatePortalSession(ctx *gin.Context) {
-// 	stripe.Key = os.Getenv("STRIPE_KEY")
-// 	err := ctx.Request.ParseForm()
-// 	if err != nil {
-// 		ctx.String(http.StatusBadRequest, "Failed to parse form")
-// 		return
-// 	}
-
-// 	sessionID := ctx.PostForm("session_id")
-// 	fmt.Println(sessionID)
-
-// 	s, err := session.Get(sessionID, nil)
-// 	if err != nil {
-// 		ctx.String(http.StatusInternalServerError, "Failed to retrieve session")
-// 		log.Printf("session.Get: %v", err)
-// 		return
-// 	}
-
-// 	params := &stripe.BillingPortalSessionParams{
-// 		Customer: stripe.String(s.Customer.ID),
-// 	}
-
-// 	ps, err := portalsession.New(params)
-// 	if err != nil {
-// 		ctx.String(http.StatusInternalServerError, "Failed to create portal session")
-// 		log.Printf("billingportal.New: %v", err)
-// 		return
-// 	}
-// 	ctx.JSON(http.StatusCreated, ps.URL)
-// }
-
-// func (sh *application) WebHook(ctx *gin.Context) {
-// 	const MaxBodyBytes = int64(65536)
-// 	ctx.Request.Body = http.MaxBytesReader(ctx.Writer, ctx.Request.Body, MaxBodyBytes)
-// 	payload, err := io.ReadAll(ctx.Request.Body)
-// 	if err != nil {
-// 		log.Printf("Error reading request body: %v\n", err)
-// 		ctx.String(http.StatusServiceUnavailable, "Failed to read request body")
-// 		return
-// 	}
-
-// 	// Replace this endpoint secret with your endpoint's unique secret
-// 	// If you are testing with the CLI, find the secret by running 'stripe listen'
-// 	// If you are using an endpoint defined with the API or dashboard, look in your webhook settings
-// 	// at https://dashboard.stripe.com/webhooks
-// 	endpointSecret := "whsec_12345"
-// 	signatureHeader := ctx.GetHeader("Stripe-Signature")
-// 	event, err := webhook.ConstructEvent(payload, signatureHeader, endpointSecret)
-// 	if err != nil {
-// 		log.Printf("⚠️  Webhook signature verification failed. %v\n", err)
-// 		ctx.String(http.StatusBadRequest, "Webhook signature verification failed")
-// 		return
-// 	}
-
-// 	// Unmarshal the event data into an appropriate struct depending on its Type
-// 	switch event.Type {
-// 	case "customer.subscription.deleted":
-// 		var subscription stripe.Subscription
-// 		err := json.Unmarshal(event.Data.Raw, &subscription)
-// 		if err != nil {
-// 			log.Printf("Error parsing webhook JSON: %v\n", err)
-// 			ctx.String(http.StatusBadRequest, "Error parsing webhook JSON")
-// 			return
-// 		}
-// 		log.Printf("Subscription deleted for %s.", subscription.ID)
-// 		// Then define and call a func to handle the deleted subscription.
-// 		// handleSubscriptionCanceled(subscription)
-// 	case "customer.subscription.updated":
-// 		var subscription stripe.Subscription
-// 		err := json.Unmarshal(event.Data.Raw, &subscription)
-// 		if err != nil {
-// 			log.Printf("Error parsing webhook JSON: %v\n", err)
-// 			ctx.String(http.StatusBadRequest, "Error parsing webhook JSON")
-// 			return
-// 		}
-// 		log.Printf("Subscription updated for %s.", subscription.ID)
-// 		// Then define and call a func to handle the successful attachment of a PaymentMethod.
-// 		// handleSubscriptionUpdated(subscription)
-// 	case "customer.subscription.created":
-// 		var subscription stripe.Subscription
-// 		err := json.Unmarshal(event.Data.Raw, &subscription)
-// 		if err != nil {
-// 			log.Printf("Error parsing webhook JSON: %v\n", err)
-// 			ctx.String(http.StatusBadRequest, "Error parsing webhook JSON")
-// 			return
-// 		}
-// 		log.Printf("Subscription created for %s.", subscription.ID)
-// 		// Then define and call a func to handle the successful attachment of a PaymentMethod.
-// 		// handleSubscriptionCreated(subscription)
-// 	case "customer.subscription.trial_will_end":
-// 		var subscription stripe.Subscription
-// 		err := json.Unmarshal(event.Data.Raw, &subscription)
-// 		if err != nil {
-// 			log.Printf("Error parsing webhook JSON: %v\n", err)
-// 			ctx.String(http.StatusBadRequest, "Error parsing webhook JSON")
-// 			return
-// 		}
-// 		log.Printf("Subscription trial will end for %s.", subscription.ID)
-// 		// Then define and call a func to handle the successful attachment of a PaymentMethod.
-// 		// handleSubscriptionTrialWillEnd(subscription)
-// 	case "entitlements.active_entitlement_summary.updated":
-// 		var subscription stripe.Subscription
-// 		err := json.Unmarshal(event.Data.Raw, &subscription)
-// 		if err != nil {
-// 			log.Printf("Error parsing webhook JSON: %v\n", err)
-// 			ctx.String(http.StatusBadRequest, "Error parsing webhook JSON")
-// 			return
-// 		}
-// 		log.Printf("Active entitlement summary updated for %s.", subscription.ID)
-// 		// Then define and call a func to handle active entitlement summary updated.
-// 		// handleEntitlementUpdated(subscription)
-// 	default:
-// 		log.Printf("Unhandled event type: %s\n", event.Type)
-// 		ctx.String(http.StatusBadRequest, "Unhandled event type")
-// 		return
-// 	}
-
-// 	// Respond with 200 OK status
-// 	ctx.String(http.StatusOK, "Webhook received")
-// }
-
-// func writeJSON(w http.ResponseWriter, v interface{}) {
-// 	var buf bytes.Buffer
-// 	if err := json.NewEncoder(&buf).Encode(v); err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		log.Printf("json.NewEncoder.Encode: %v", err)
-// 		return
-// 	}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	if _, err := io.Copy(w, &buf); err != nil {
-// 		log.Printf("io.Copy: %v", err)
-// 		return
-// 	}
-// }
