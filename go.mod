@@ -4,7 +4,6 @@ go 1.22.4
 
 require (
 	github.com/gin-gonic/gin v1.10.0
-	github.com/golang/mock v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/stripe/stripe-go v70.15.0+incompatible
 	github.com/stripe/stripe-go/v79 v79.1.0

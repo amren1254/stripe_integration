@@ -1,14 +1,18 @@
 package constant
 
+import "os"
+
 // endpoint constants
 const (
+	ENV_PATH                = "../../.env"
 	PING                    = "/ping"
 	FORWARD_SLASH           = "/"
 	VERSION_ONE             = "/v1"
 	CREATE_CHECKOUT_SESSION = "/create-checkout-session"
 	CREATE_PORTAL_SESSION   = "/create-portal-session"
 	WEBHOOK                 = "/webhook"
-	HOST_ADDRESS            = "localhost"
-	PORT_NUMBER             = 4242
-	STATIC_FILE_PATH        = "public/"
+)
+
+var (
+	PRODUCT_PRICE_ID = os.Getenv("PRODUCT_PRICE_ID")
 )
